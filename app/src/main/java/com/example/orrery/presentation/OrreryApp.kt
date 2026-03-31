@@ -1,25 +1,28 @@
 package com.example.orrery.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.wear.compose.material3.Text
 import com.example.orrery.astronomy.BodyPosition
 import com.example.orrery.astronomy.CelestialCalculator
-import com.example.orrery.location.CompassProvider
 import com.example.orrery.location.LocationProvider
 import com.example.orrery.presentation.theme.OrreryTheme
 import com.example.orrery.presentation.theme.SkyBackground
@@ -47,14 +50,10 @@ fun OrreryApp(
         val context = LocalContext.current
         val locationProvider = remember { LocationProvider(context) }
         val calculator = remember { CelestialCalculator() }
-        val compassProvider = remember { CompassProvider(context) }
 
-        // Compass azimuth — null if sensor not available (e.g., emulator)
-        val compassAzimuth by if (compassProvider.isAvailable) {
-            compassProvider.azimuthFlow().collectAsState(initial = 0f)
-        } else {
-            remember { mutableStateOf(null as Float?) }
-        }
+        // Manual rotation via rotary crown, in degrees
+        var rotationDegrees by remember { mutableFloatStateOf(0f) }
+        val focusRequester = remember { FocusRequester() }
 
         // Incremented each time the app resumes to trigger recalculation
         var refreshTrigger by remember { mutableIntStateOf(0) }
@@ -95,26 +94,45 @@ fun OrreryApp(
             )
         }
 
-        when (val s = state) {
-            is OrreryState.Loading -> {
-                CenteredMessage("Loading...")
-            }
-            is OrreryState.NeedsPermission -> {
-                LaunchedEffect(Unit) {
-                    onRequestPermission()
+        // Request focus for rotary input
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .onRotaryScrollEvent { event ->
+                    // Crown scroll: positive = clockwise = rotate map clockwise
+                    rotationDegrees += event.verticalScrollPixels * 0.5f
+                    // Normalize to 0-360
+                    rotationDegrees = ((rotationDegrees % 360f) + 360f) % 360f
+                    true
                 }
-                CenteredMessage("Location access needed")
-            }
-            is OrreryState.Ready -> {
-                SkyMapCanvas(
-                    bodies = s.bodies,
-                    moonPhaseDegrees = s.moonPhaseDegrees,
-                    sunAltitude = s.sunAltitude,
-                    compassAzimuth = compassAzimuth
-                )
-            }
-            is OrreryState.Error -> {
-                CenteredMessage(s.message)
+                .focusRequester(focusRequester)
+                .focusable()
+        ) {
+            when (val s = state) {
+                is OrreryState.Loading -> {
+                    CenteredMessage("Loading...")
+                }
+                is OrreryState.NeedsPermission -> {
+                    LaunchedEffect(Unit) {
+                        onRequestPermission()
+                    }
+                    CenteredMessage("Location access needed")
+                }
+                is OrreryState.Ready -> {
+                    SkyMapCanvas(
+                        bodies = s.bodies,
+                        moonPhaseDegrees = s.moonPhaseDegrees,
+                        sunAltitude = s.sunAltitude,
+                        rotationDegrees = rotationDegrees
+                    )
+                }
+                is OrreryState.Error -> {
+                    CenteredMessage(s.message)
+                }
             }
         }
     }

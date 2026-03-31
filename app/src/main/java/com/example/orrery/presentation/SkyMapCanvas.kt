@@ -39,16 +39,17 @@ private const val SUN_LOW = 10.0
 private const val SUN_HIGH = 30.0
 
 /**
- * @param compassAzimuth Device compass bearing in degrees (0=north, 90=east).
- *                       When non-null, the sky map rotates so the direction
- *                       the user faces is at the top of the watch.
+ * @param rotationDegrees Manual rotation from the rotary crown, in degrees.
+ *                        0 = north at top (default). Turning the crown rotates
+ *                        the sky map so you can align it with the direction
+ *                        you're facing.
  */
 @Composable
 fun SkyMapCanvas(
     bodies: List<BodyPosition>,
     moonPhaseDegrees: Double,
     sunAltitude: Double,
-    compassAzimuth: Float? = null
+    rotationDegrees: Float = 0f
 ) {
     val textMeasurer = rememberTextMeasurer()
 
@@ -72,10 +73,7 @@ fun SkyMapCanvas(
             style = Stroke(width = 2f)
         )
 
-        // The rotation offset: when compass says we're facing east (90°),
-        // east should be at the top, so we subtract the compass azimuth
-        // from each body's azimuth before projecting.
-        val rotationOffset = compassAzimuth?.toDouble() ?: 0.0
+        val rotationOffset = rotationDegrees.toDouble()
 
         // Cardinal direction ticks and labels (rotated)
         drawCardinalLabels(center, skyRadius, textMeasurer, sunAltitude, rotationOffset)
