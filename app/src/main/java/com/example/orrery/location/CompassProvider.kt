@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlin.math.atan2
 
 class CompassProvider(context: Context) {
 
@@ -17,27 +18,41 @@ class CompassProvider(context: Context) {
     val isAvailable: Boolean get() = rotationSensor != null
 
     /**
-     * Emits the device's azimuth (bearing from north) in degrees, 0-360.
-     * 0 = north, 90 = east, 180 = south, 270 = west.
-     * Values are smoothed to reduce jitter.
+     * Emits the compass direction that the 12 o'clock position of the watch
+     * is pointing, projected onto the horizontal (ground) plane.
+     *
+     * This only tracks rotation around the vertical axis (like a compass on
+     * a table). Tilting the watch does NOT affect the reading — only turning
+     * your body changes it.
+     *
+     * Returns degrees 0-360: 0 = north, 90 = east, 180 = south, 270 = west.
      */
     fun azimuthFlow(): Flow<Float> = callbackFlow {
         val rotationMatrix = FloatArray(9)
-        val orientation = FloatArray(3)
 
-        // Simple low-pass filter for smoothing
         var smoothedAzimuth = 0f
         var initialized = false
-        val alpha = 0.15f
+        val alpha = 0.12f
 
         val listener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
                 SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
-                SensorManager.getOrientation(rotationMatrix, orientation)
 
-                // orientation[0] is azimuth in radians, -PI to PI
-                var azimuthDeg = Math.toDegrees(orientation[0].toDouble()).toFloat()
-                if (azimuthDeg < 0) azimuthDeg += 360f
+                // The rotation matrix R maps device coordinates to world coordinates:
+                //   World: X=East, Y=North, Z=Up
+                //   Device: X=3 o'clock, Y=12 o'clock, Z=out of screen
+                //
+                // The device Y-axis (12 o'clock) in world coordinates is column 1:
+                //   east component  = R[1]  (index 0*3+1)
+                //   north component = R[4]  (index 1*3+1)
+                //
+                // Project onto horizontal plane and compute bearing from north:
+                val eastComponent = rotationMatrix[1]
+                val northComponent = rotationMatrix[4]
+                var azimuthDeg = Math.toDegrees(
+                    atan2(eastComponent.toDouble(), northComponent.toDouble())
+                ).toFloat()
+                if (azimuthDeg < 0f) azimuthDeg += 360f
 
                 if (!initialized) {
                     smoothedAzimuth = azimuthDeg

@@ -187,7 +187,7 @@ private fun lerp(a: Color, b: Color, t: Float): Color {
 private fun resolveOverlaps(
     positions: List<Pair<BodyPosition, Offset>>
 ): List<Pair<BodyPosition, Offset>> {
-    val minDistance = 36f
+    val minDistance = 42f
     val resolved = positions.map { it.first to it.second.copy() }.toMutableList()
 
     repeat(6) {
@@ -248,7 +248,7 @@ private fun DrawScope.drawCardinalLabels(
 
     val labelStyle = TextStyle(
         color = labelColor,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
         fontFamily = FontFamily.Default
     )
@@ -292,7 +292,7 @@ private fun DrawScope.drawPlanetSymbol(
 ) {
     val style = TextStyle(
         color = body.displayColor,
-        fontSize = 26.sp,
+        fontSize = 30.sp,
         fontFamily = FontFamily.Default
     )
     val measured = textMeasurer.measure(AnnotatedString(body.symbol), style)
