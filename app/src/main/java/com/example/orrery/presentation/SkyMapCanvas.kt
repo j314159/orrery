@@ -23,6 +23,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import com.example.orrery.astronomy.BodyPosition
 import com.example.orrery.astronomy.CelestialBody
+import com.example.orrery.astronomy.EclipticPoint
 import com.example.orrery.presentation.theme.CardinalTickColor
 import com.example.orrery.presentation.theme.HorizonRing
 import com.example.orrery.util.projectToScreen
@@ -49,6 +50,7 @@ fun SkyMapCanvas(
     bodies: List<BodyPosition>,
     moonPhaseDegrees: Double,
     sunAltitude: Double,
+    eclipticPoints: List<EclipticPoint> = emptyList(),
     rotationDegrees: Float = 0f
 ) {
     val textMeasurer = rememberTextMeasurer()
@@ -78,7 +80,10 @@ fun SkyMapCanvas(
         // Cardinal direction ticks and labels (rotated)
         drawCardinalLabels(center, skyRadius, textMeasurer, sunAltitude, rotationOffset)
 
-        // Compute screen positions with compass rotation applied
+        // Ecliptic line — the orbital plane of the solar system
+        drawEclipticLine(eclipticPoints, center, skyRadius, rotationOffset, sunAltitude)
+
+        // Compute screen positions with rotation applied
         val positions = bodies.map { body ->
             body to projectToScreen(
                 body.altitude,
@@ -179,6 +184,59 @@ private fun lerp(a: Color, b: Color, t: Float): Color {
         green = a.green + (b.green - a.green) * clamped,
         blue = a.blue + (b.blue - a.blue) * clamped,
         alpha = 1f
+    )
+}
+
+private fun DrawScope.drawEclipticLine(
+    points: List<EclipticPoint>,
+    center: Offset,
+    skyRadius: Float,
+    rotationOffset: Double,
+    sunAltitude: Double
+) {
+    if (points.isEmpty()) return
+
+    // Muted warm color — subtle enough to not distract, visible enough to read
+    val eclipticColor = if (sunAltitude > SUN_AT_HORIZON) {
+        Color(0x30FFD700)  // very faint gold during daytime
+    } else {
+        Color(0x40C8A050)  // warm gold at ~25% opacity at night
+    }
+
+    // Project all points and track which are above the horizon
+    data class ScreenPoint(val offset: Offset, val aboveHorizon: Boolean)
+
+    val screenPoints = points.map { pt ->
+        val pos = projectToScreen(
+            pt.altitude,
+            pt.azimuth - rotationOffset,
+            center.x, center.y, skyRadius
+        )
+        ScreenPoint(pos, pt.altitude > 0.0)
+    }
+
+    // Draw connected segments for runs of above-horizon points
+    var inSegment = false
+    val path = Path()
+
+    for (i in screenPoints.indices) {
+        val pt = screenPoints[i]
+        if (pt.aboveHorizon) {
+            if (!inSegment) {
+                path.moveTo(pt.offset.x, pt.offset.y)
+                inSegment = true
+            } else {
+                path.lineTo(pt.offset.x, pt.offset.y)
+            }
+        } else {
+            inSegment = false
+        }
+    }
+
+    drawPath(
+        path = path,
+        color = eclipticColor,
+        style = Stroke(width = 1.5f)
     )
 }
 

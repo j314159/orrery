@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.wear.compose.material3.Text
 import com.example.orrery.astronomy.BodyPosition
 import com.example.orrery.astronomy.CelestialCalculator
+import com.example.orrery.astronomy.EclipticPoint
 import com.example.orrery.location.LocationProvider
 import com.example.orrery.presentation.theme.OrreryTheme
 import com.example.orrery.presentation.theme.SkyBackground
@@ -35,7 +36,8 @@ sealed class OrreryState {
     data class Ready(
         val bodies: List<BodyPosition>,
         val moonPhaseDegrees: Double,
-        val sunAltitude: Double
+        val sunAltitude: Double,
+        val eclipticPoints: List<EclipticPoint>
     ) : OrreryState()
     data class Error(val message: String) : OrreryState()
 }
@@ -90,7 +92,8 @@ fun OrreryApp(
             state = OrreryState.Ready(
                 bodies = snapshot.bodies,
                 moonPhaseDegrees = snapshot.moonPhaseDegrees,
-                sunAltitude = snapshot.sunAltitude
+                sunAltitude = snapshot.sunAltitude,
+                eclipticPoints = snapshot.eclipticPoints
             )
         }
 
@@ -127,6 +130,7 @@ fun OrreryApp(
                         bodies = s.bodies,
                         moonPhaseDegrees = s.moonPhaseDegrees,
                         sunAltitude = s.sunAltitude,
+                        eclipticPoints = s.eclipticPoints,
                         rotationDegrees = rotationDegrees
                     )
                 }
