@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.wear.compose.material3.Text
 import com.example.orrery.astronomy.BodyPosition
 import com.example.orrery.astronomy.CelestialCalculator
+import com.example.orrery.location.CompassProvider
 import com.example.orrery.location.LocationProvider
 import com.example.orrery.presentation.theme.OrreryTheme
 import com.example.orrery.presentation.theme.SkyBackground
@@ -29,7 +31,8 @@ sealed class OrreryState {
     data object NeedsPermission : OrreryState()
     data class Ready(
         val bodies: List<BodyPosition>,
-        val moonPhaseDegrees: Double
+        val moonPhaseDegrees: Double,
+        val sunAltitude: Double
     ) : OrreryState()
     data class Error(val message: String) : OrreryState()
 }
@@ -44,6 +47,14 @@ fun OrreryApp(
         val context = LocalContext.current
         val locationProvider = remember { LocationProvider(context) }
         val calculator = remember { CelestialCalculator() }
+        val compassProvider = remember { CompassProvider(context) }
+
+        // Compass azimuth — null if sensor not available (e.g., emulator)
+        val compassAzimuth by if (compassProvider.isAvailable) {
+            compassProvider.azimuthFlow().collectAsState(initial = 0f)
+        } else {
+            remember { mutableStateOf(null as Float?) }
+        }
 
         // Incremented each time the app resumes to trigger recalculation
         var refreshTrigger by remember { mutableIntStateOf(0) }
@@ -79,7 +90,8 @@ fun OrreryApp(
 
             state = OrreryState.Ready(
                 bodies = snapshot.bodies,
-                moonPhaseDegrees = snapshot.moonPhaseDegrees
+                moonPhaseDegrees = snapshot.moonPhaseDegrees,
+                sunAltitude = snapshot.sunAltitude
             )
         }
 
@@ -96,7 +108,9 @@ fun OrreryApp(
             is OrreryState.Ready -> {
                 SkyMapCanvas(
                     bodies = s.bodies,
-                    moonPhaseDegrees = s.moonPhaseDegrees
+                    moonPhaseDegrees = s.moonPhaseDegrees,
+                    sunAltitude = s.sunAltitude,
+                    compassAzimuth = compassAzimuth
                 )
             }
             is OrreryState.Error -> {

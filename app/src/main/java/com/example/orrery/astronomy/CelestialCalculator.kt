@@ -13,12 +13,15 @@ class CelestialCalculator {
 
     data class SkySnapshot(
         val bodies: List<BodyPosition>,
-        val moonPhaseDegrees: Double
+        val moonPhaseDegrees: Double,
+        val sunAltitude: Double
     )
 
     fun calculate(latitude: Double, longitude: Double, elevation: Double = 0.0): SkySnapshot {
         val observer = Observer(latitude, longitude, elevation)
         val time = Time.fromMillisecondsSince1970(System.currentTimeMillis())
+
+        var sunAlt = -90.0
 
         val bodies = CelestialBody.entries.mapNotNull { celestialBody ->
             val equatorial = equator(
@@ -37,6 +40,11 @@ class CelestialCalculator {
                 Refraction.Normal
             )
 
+            // Track Sun altitude for sky gradient (even when below horizon)
+            if (celestialBody == CelestialBody.SUN) {
+                sunAlt = horizontal.altitude
+            }
+
             val position = BodyPosition(
                 body = celestialBody,
                 altitude = horizontal.altitude,
@@ -48,6 +56,6 @@ class CelestialCalculator {
 
         val phase = moonPhase(time)
 
-        return SkySnapshot(bodies, phase)
+        return SkySnapshot(bodies, phase, sunAlt)
     }
 }
