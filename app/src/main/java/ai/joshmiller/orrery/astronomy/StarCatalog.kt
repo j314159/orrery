@@ -1,0 +1,171 @@
+package ai.joshmiller.orrery.astronomy
+
+/**
+ * A star from the catalog with its J2000 equatorial coordinates.
+ * @param name Common name (for brightest stars) or designation
+ * @param ra Right ascension in hours (J2000)
+ * @param dec Declination in degrees (J2000)
+ * @param magnitude Apparent visual magnitude (lower = brighter)
+ */
+data class CatalogStar(
+    val name: String,
+    val ra: Double,
+    val dec: Double,
+    val magnitude: Double
+)
+
+/**
+ * Bright star catalog — the ~170 brightest stars visible to the naked eye,
+ * down to approximately magnitude 3.5. Coordinates are J2000 epoch.
+ *
+ * This is sufficient to show the major constellation patterns and give
+ * a realistic star field on a watch display.
+ */
+val BRIGHT_STARS: List<CatalogStar> = listOf(
+    // Mag -1 to 0
+    CatalogStar("Sirius", 6.752, -16.716, -1.46),
+    CatalogStar("Canopus", 6.399, -52.696, -0.74),
+    CatalogStar("Arcturus", 14.261, 19.182, -0.05),
+    CatalogStar("Vega", 18.616, 38.784, 0.03),
+    CatalogStar("Capella", 5.278, 45.998, 0.08),
+    CatalogStar("Rigel", 5.242, -8.202, 0.13),
+    CatalogStar("Procyon", 7.655, 5.225, 0.34),
+    CatalogStar("Betelgeuse", 5.919, 7.407, 0.42),
+    CatalogStar("Achernar", 1.629, -57.237, 0.46),
+
+    // Mag 0.5 to 1.0
+    CatalogStar("Hadar", 14.064, -60.373, 0.61),
+    CatalogStar("Altair", 19.846, 8.868, 0.77),
+    CatalogStar("Acrux", 12.443, -63.100, 0.77),
+    CatalogStar("Aldebaran", 4.599, 16.509, 0.86),
+    CatalogStar("Antares", 16.490, -26.432, 0.96),
+    CatalogStar("Spica", 13.420, -11.161, 0.97),
+    CatalogStar("Pollux", 7.755, 28.026, 1.14),
+    CatalogStar("Fomalhaut", 22.961, -29.622, 1.16),
+    CatalogStar("Deneb", 20.691, 45.280, 1.25),
+    CatalogStar("Mimosa", 12.796, -59.689, 1.25),
+    CatalogStar("Regulus", 10.140, 11.967, 1.36),
+
+    // Mag 1.5 to 2.0
+    CatalogStar("Adhara", 6.977, -28.972, 1.50),
+    CatalogStar("Castor", 7.577, 31.888, 1.58),
+    CatalogStar("Gacrux", 12.519, -57.113, 1.63),
+    CatalogStar("Shaula", 17.560, -37.104, 1.63),
+    CatalogStar("Bellatrix", 5.419, 6.350, 1.64),
+    CatalogStar("Elnath", 5.438, 28.608, 1.65),
+    CatalogStar("Miaplacidus", 9.220, -69.717, 1.68),
+    CatalogStar("Alnilam", 5.604, -1.202, 1.69),
+    CatalogStar("Alnair", 22.137, -46.961, 1.74),
+    CatalogStar("Alnitak", 5.679, -1.943, 1.77),
+    CatalogStar("Alioth", 12.900, 55.960, 1.77),
+    CatalogStar("Dubhe", 11.062, 61.751, 1.79),
+    CatalogStar("Mirfak", 3.405, 49.861, 1.80),
+    CatalogStar("Wezen", 7.140, -26.393, 1.84),
+    CatalogStar("Kaus Australis", 18.403, -34.385, 1.85),
+    CatalogStar("Sargas", 17.622, -42.998, 1.87),
+    CatalogStar("Avior", 8.376, -59.510, 1.86),
+    CatalogStar("Alkaid", 13.792, 49.313, 1.86),
+    CatalogStar("Menkalinan", 5.992, 44.947, 1.90),
+    CatalogStar("Atria", 16.811, -69.028, 1.92),
+    CatalogStar("Alhena", 6.629, 16.399, 1.93),
+    CatalogStar("Peacock", 20.427, -56.735, 1.94),
+    CatalogStar("Alsephina", 8.159, -47.337, 1.96),
+    CatalogStar("Mirzam", 6.379, -17.956, 1.98),
+    CatalogStar("Alphard", 9.460, -8.659, 1.98),
+    CatalogStar("Polaris", 2.530, 89.264, 1.98),
+    CatalogStar("Hamal", 2.120, 23.462, 2.00),
+
+    // Mag 2.0 to 2.5
+    CatalogStar("Sheratan", 1.911, 20.808, 2.64),
+    CatalogStar("Diphda", 0.727, -17.987, 2.02),
+    CatalogStar("Nunki", 18.921, -26.297, 2.05),
+    CatalogStar("Mizar", 13.399, 54.925, 2.06),
+    CatalogStar("Saiph", 5.796, -9.670, 2.09),
+    CatalogStar("Kochab", 14.845, 74.156, 2.08),
+    CatalogStar("Rasalhague", 17.582, 12.560, 2.08),
+    CatalogStar("Algol", 3.136, 40.957, 2.12),
+    CatalogStar("Almach", 2.065, 42.330, 2.17),
+    CatalogStar("Denebola", 11.818, 14.572, 2.13),
+    CatalogStar("Naos", 8.060, -40.003, 2.25),
+    CatalogStar("Tiaki", 0.081, -45.747, 2.26),
+    CatalogStar("Muhlifain", 12.694, -48.960, 2.17),
+    CatalogStar("Aspidiske", 9.285, -59.275, 2.25),
+    CatalogStar("Suhail", 9.133, -43.433, 2.21),
+    CatalogStar("Alphecca", 15.578, 26.715, 2.23),
+    CatalogStar("Mintaka", 5.533, -0.299, 2.23),
+    CatalogStar("Sadr", 20.370, 40.257, 2.23),
+    CatalogStar("Eltanin", 17.944, 51.489, 2.23),
+    CatalogStar("Schedar", 0.675, 56.537, 2.23),
+    CatalogStar("Caph", 0.153, 59.150, 2.27),
+    CatalogStar("Dschubba", 16.006, -22.622, 2.29),
+    CatalogStar("Larawag", 17.208, -43.239, 2.29),
+    CatalogStar("Merak", 11.031, 56.382, 2.37),
+    CatalogStar("Izar", 14.750, 27.074, 2.37),
+    CatalogStar("Enif", 21.736, 9.875, 2.39),
+    CatalogStar("Ankaa", 0.438, -42.306, 2.38),
+    CatalogStar("Phecda", 11.897, 53.695, 2.44),
+    CatalogStar("Sabik", 17.173, -15.725, 2.43),
+    CatalogStar("Scheat", 23.063, 28.083, 2.42),
+    CatalogStar("Aludra", 7.402, -29.303, 2.45),
+    CatalogStar("Markab", 23.079, 15.205, 2.49),
+    CatalogStar("Aljanah", 20.771, 33.970, 2.48),
+    CatalogStar("Acrab", 16.091, -19.806, 2.50),
+
+    // Mag 2.5 to 3.0
+    CatalogStar("Menkar", 3.038, 4.090, 2.53),
+    CatalogStar("Markeb", 9.368, -55.011, 2.47),
+    CatalogStar("Alderamin", 21.310, 62.586, 2.51),
+    CatalogStar("Algorab", 12.497, -16.516, 2.59),
+    CatalogStar("Deneb Algedi", 21.784, -16.127, 2.87),
+    CatalogStar("Phact", 5.661, -34.074, 2.64),
+    CatalogStar("Tianguan", 5.438, 21.143, 2.97),
+    CatalogStar("Menkent", 14.111, -36.370, 2.06),
+    CatalogStar("Alpheratz", 0.140, 29.091, 2.06),
+    CatalogStar("Mirach", 1.163, 35.621, 2.05),
+    CatalogStar("Zubeneschamali", 15.283, -9.383, 2.61),
+    CatalogStar("Zubenelgenubi", 14.848, -16.042, 2.75),
+    CatalogStar("Unukalhai", 15.738, 6.426, 2.65),
+    CatalogStar("Rasalgethi", 17.244, 14.390, 2.81),
+    CatalogStar("Kornephoros", 16.504, 21.490, 2.77),
+    CatalogStar("Arneb", 5.545, -17.822, 2.58),
+    CatalogStar("Gienah", 12.263, -17.542, 2.59),
+    CatalogStar("Porrima", 12.694, -1.449, 2.74),
+    CatalogStar("Vindemiatrix", 13.036, 10.959, 2.83),
+    CatalogStar("Megrez", 12.257, 57.033, 3.31),
+    CatalogStar("Thuban", 14.073, 64.376, 3.67),
+    CatalogStar("Algieba", 10.333, 19.842, 2.28),
+
+    // Mag 3.0 to 3.5 — fills out the sky
+    CatalogStar("Sadalmelik", 22.096, -0.320, 2.96),
+    CatalogStar("Sadalsuud", 21.526, -5.571, 2.91),
+    CatalogStar("Nashira", 21.668, -16.662, 3.68),
+    CatalogStar("Dabih", 20.350, -14.781, 3.08),
+    CatalogStar("Biham", 22.711, 6.198, 3.53),
+    CatalogStar("Altais", 19.209, 67.662, 3.07),
+    CatalogStar("Aldhanab", 22.711, -43.496, 3.27),
+    CatalogStar("Tarazed", 19.771, 10.613, 2.72),
+    CatalogStar("Albireo", 19.512, 27.960, 3.08),
+    CatalogStar("Sheliak", 18.835, 33.363, 3.52),
+    CatalogStar("Sulafat", 18.982, 32.690, 3.24),
+    CatalogStar("Rastaban", 17.507, 52.301, 2.79),
+    CatalogStar("Navi", 0.945, 60.717, 2.47),
+    CatalogStar("Ruchbah", 1.430, 60.235, 2.68),
+    CatalogStar("Segin", 1.907, 63.670, 3.37),
+    CatalogStar("Matar", 22.775, 30.221, 2.95),
+    CatalogStar("Alcyone", 3.791, 24.105, 2.87),
+    CatalogStar("Electra", 3.749, 24.114, 3.70),
+    CatalogStar("Merope", 3.772, 23.948, 4.18),
+    CatalogStar("Atlas", 3.816, 24.053, 3.63),
+    CatalogStar("Maia", 3.763, 24.368, 3.87),
+    CatalogStar("Cursa", 5.131, -5.086, 2.79),
+    CatalogStar("Nihal", 5.471, -20.759, 2.84),
+    CatalogStar("Furud", 6.338, -30.063, 3.02),
+    CatalogStar("Alula Borealis", 11.308, 33.095, 3.49),
+    CatalogStar("Muscida", 8.505, 60.718, 3.36),
+    CatalogStar("Tania Borealis", 10.284, 42.914, 3.45),
+    CatalogStar("Cor Caroli", 12.934, 38.318, 2.81),
+    CatalogStar("Chara", 12.558, 41.357, 4.26),
+    CatalogStar("Pherkad", 15.346, 71.834, 3.00),
+    CatalogStar("Yildun", 17.537, 86.586, 4.36),
+    CatalogStar("Errai", 23.655, 77.632, 3.21)
+)

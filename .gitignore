@@ -13,3 +13,6 @@
 *.dex
 /app/build
 /app/release
+*.jks
+keystore.properties
+.kotlin/
