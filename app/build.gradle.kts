@@ -18,9 +18,9 @@ android {
     defaultConfig {
         applicationId = "ai.joshmiller.orrery"
         minSdk = 30
-        targetSdk = 34
-        versionCode = 4
-        versionName = "1.1.0"
+        targetSdk = 35
+        versionCode = 5
+        versionName = "1.1.1"
     }
 
     signingConfigs {
