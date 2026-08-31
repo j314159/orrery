@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Orrery</string>
     <string name="complication_label">Planets overhead</string>
+    <string name="moon_complication_label">Moon phase</string>
 </resources>
