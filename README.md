@@ -25,7 +25,8 @@ for wherever you're standing.
   click; see where Jupiter will be at midnight, tap to snap back to now
 - **Living sky background** — the map shifts through sunrise, daylight, twilight,
   and night to match the actual sky above you
-- **Watch face complication** — "Planets overhead" count, updated through the day
+- **Watch face complications** — "Planets overhead" count, and the Moon's
+  current illumination percentage, each tappable to open the app
 - **Private by design** — fully offline, approximate location only, nothing ever
   leaves the watch; no ads, no analytics, no accounts
 
