@@ -31,13 +31,18 @@ Paste-ready content for the Play Console. Character limits noted where they appl
 > **Scrub through time with the crown**
 > Turn the watch crown to roll the sky forward or backward an hour at a time. See where Jupiter will be at midnight, or when the Moon sets. Tap once to snap back to now.
 >
-> **Watch face complication**
-> Add the "Planets overhead" complication to your watch face to see at a glance how many planets are up, updated automatically through the day.
+> **Watch face complications**
+> Add "Planets overhead" to your watch face to see at a glance how many planets are up, or "Moon phase" for the Moon's current illumination — both update automatically through the day and tap straight into the app.
 >
 > **Private by design**
 > Orrery works completely offline. Your location is used only on the watch to compute the sky — it is never sent anywhere. No ads, no analytics, no accounts, no tracking. Free, with nothing to buy.
 >
 > Made by one person who wanted to know what that bright dot above the sunset was. (It was Venus.)
+
+## Release notes for v1.2.0 (500 chars max)
+
+> • New: Moon phase watch face complication — the Moon's current illumination at a glance, tap to open the app
+> • Needs no location and updates hourly
 
 ## Release notes for v1.1.0 (500 chars max)
 
@@ -74,7 +79,7 @@ Paste-ready content for the Play Console. Character limits noted where they appl
 
 ## Upload artifact
 
-`app/build/outputs/bundle/release/app-release.aab` — v1.1.0 (versionCode 4), signed.
+`app/build/outputs/bundle/release/app-release.aab` — v1.2.0 (versionCode 6), signed.
 Enroll in **Play App Signing** when prompted at first upload (Google escrows the signing
 key; your local keystore becomes the upload key — this protects the app if the keystore
 is ever lost).
